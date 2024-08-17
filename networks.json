@@ -1,0 +1,8 @@
+{
+  "sepolia": {
+    "KakarottoCharacter": {
+      "address": "0x297276a7d6f89467574c58ae34e34a8c5e15ac3c",
+      "startBlock": 6457578
+    }
+  }
+}
