@@ -1,76 +1,229 @@
-type Approval @entity(immutable: true) {
-  id: Bytes!
+type Count @entity {
+  id: ID!
+
+  orderTotal: Int!
+  orderCharacterTotal: Int!
+  orderTreasureTotal: Int!
+  orderItemTotal: Int!
+
+  characterTotal: Int!
+  treasureTotal: Int!
+  itemTotal: Int!
+
+  started: Int!
+  salesTotal: Int!
+  creatorEarningTotal: BigInt!
+  daoEarningTotal: BigInt!
+}
+
+type Account @entity {
+  id: ID! # address
+  address: Bytes! # address
+  nfts: [NFT!] @derivedFrom(field: "owner")
+  treasures: [Treasure!] @derivedFrom(field: "owner")
+
+  # analytics
+  sales: Int!
+  purchases: Int!
+  spent: BigInt!
+  earned: BigInt!
+}
+
+type NFT @entity {
+  id: ID!
+  tokenId: BigInt! # uint256
+  contractAddress: Bytes! # address
+  category: Category! # string
+  creator: Bytes! # address
+  owner: Account!
+  amount: Int!
+  tokenURI: String # string
+  rarity: Rarity! # string
+  orders: [Order!]! @derivedFrom(field: "nft")
+  bids: [Bid!]! @derivedFrom(field: "nft")
+  activeOrder: Order
+
+  name: String # string
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  soldAt: BigInt
+  transferredAt: BigInt!
+
+  character: Character
+  item: Item
+  treasure: Treasure
+
+  # analytics
+  sales: Int!
+  volume: BigInt!
+
+  # search indexes
+  searchOrderStatus: OrderStatus
+  searchOrderPrice: BigInt
+  searchOrderExpiresAt: BigInt
+  searchOrderCreatedAt: BigInt
+
+  searchIsCharacter: Boolean
+  searchCharacterAccount: Bytes
+  searchCharacterLevel: BigInt
+  searchCharacterExp: BigInt
+  searchCharacterAttribute: [CharacterAttribute!]
+
+  searchIsTreasure: Boolean
+  searchTreasureAmount: Int
+
+  searchIsItem: Boolean
+  searchItemAttribute: [ItemAttribute!]
+}
+
+type Character @entity {
+  id: ID!
+  characterAccount: CharacterAccount! @derivedFrom(field: "character")
+  level: BigInt! # uint256
+  exp: BigInt! # uint256
+  nft: NFT! @derivedFrom(field: "character")
+  attributes: [CharacterAttribute!]! @derivedFrom(field: "character")
+}
+
+type CharacterAttribute @entity {
+  id: ID!
+  attribute: Attribute! # string
+  character: Character @derivedFrom(field: "attributes")
+  value: BigInt! # uint256
+}
+
+type CharacterAccount @entity {
+  id: ID! # address
+  character: Character @derivedFrom(field: "characterAccount")
+  contractAddress: Bytes! # address
+}
+
+type Treasure @entity {
+  id: ID! # address + tokenId
+  tokenId: BigInt! # uint256
+  tokenURI: String # string
+  nft: NFT! @derivedFrom(field: "treasure")
+
+  name: String # string
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  owner: [Account!] @derivedFrom(field: "treasures")
+}
+
+type TreasureAccount @entity {
+  id: ID!
+  account: Account!
+  treasure: Treasure!
+  balance: BigInt!
+}
+
+type Item @entity {
+  id: ID!
+  nft: NFT! @derivedFrom(field: "item")
+  attributes: [ItemAttribute!]! @derivedFrom(field: "item")
+}
+
+type ItemAttribute @entity {
+  id: ID!
+  item: Item! @derivedFrom(field: "attributes")
+  attribute: Attribute! # string
+  value: BigInt! # uint256
+  isIncrease: Boolean!
+  isPercentage: Boolean!
+}
+
+type Order @entity {
+  id: ID!
+  marketplaceAddress: Bytes! # address
+  category: Category! # string
+  nft: NFT
+  nftAddress: Bytes! # address
+  tokenId: BigInt! # uint256
+  amount: Int!
+  transactionHash: Bytes!
   owner: Bytes! # address
-  approved: Bytes! # address
+  buyer: Bytes! # address
+  price: BigInt! # uint256
+  status: OrderStatus! # string
+  blockNumber: BigInt!
+  expiresAt: BigInt! # uint256
+  createdAt: BigInt!
+  updatedAt: BigInt!
+}
+
+type Bid @entity {
+  id: ID!
+  bidAddress: Bytes! # address
+  category: Category! # string
+  nft: NFT
+  nftAddress: Bytes! # address
   tokenId: BigInt! # uint256
+  bidder: Bytes! # address
+  seller: Bytes! # address
+  price: BigInt! # uint256
+  status: OrderStatus! # string
+  blockchainId: String!
   blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+  expiresAt: BigInt! # uint256
+  createdAt: BigInt!
+  updatedAt: BigInt!
 }
 
-type ApprovalForAll @entity(immutable: true) {
-  id: Bytes!
-  owner: Bytes! # address
-  operator: Bytes! # address
-  approved: Boolean! # bool
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
+type Sale @entity {
+  id: ID!
+  type: SaleType! # string
+  buyer: Bytes! # address
+  seller: Bytes! # address
+  price: BigInt! # uint256
+  nft: NFT!
+  amount: Int!
+  timestamp: BigInt!
   transactionHash: Bytes!
+
+  # search
+  searchTokenId: BigInt!
+  searchContractAddress: Bytes!
+  searchCategory: Category!
 }
 
-type BatchMetadataUpdate @entity(immutable: true) {
-  id: Bytes!
-  _fromTokenId: BigInt! # uint256
-  _toTokenId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type AnalyticsDayData @entity {
+  id: ID!
+  date: Int!
+  sales: Int!
+  volume: BigInt!
+  creatorsEarning: BigInt!
+  daoEarning: BigInt!
 }
 
-type KakarottoCharacterCreated @entity(immutable: true) {
-  id: Bytes!
-  tokenId: BigInt! # uint256
-  tokenUri: String! # string
-  owner: Bytes! # address
-  account: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum Rarity {
+  bronze
+  silver
+  gold
+  platinum
+  diamond
 }
 
-type KakarottoCharacterLevelUp @entity(immutable: true) {
-  id: Bytes!
-  tokenId: BigInt! # uint256
-  fromLevel: BigInt! # uint256
-  toLevel: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum Category {
+  character
+  treasure
+  item
 }
 
-type MetadataUpdate @entity(immutable: true) {
-  id: Bytes!
-  _tokenId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum Attribute {
+  power
+  defend
+  agility
+  intelligence
+  luck
 }
 
-type OwnershipTransferred @entity(immutable: true) {
-  id: Bytes!
-  previousOwner: Bytes! # address
-  newOwner: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum OrderStatus {
+  open
+  sold
+  cancelled
 }
 
-type Transfer @entity(immutable: true) {
-  id: Bytes!
-  from: Bytes! # address
-  to: Bytes! # address
-  tokenId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum SaleType {
+  bid
+  order
 }

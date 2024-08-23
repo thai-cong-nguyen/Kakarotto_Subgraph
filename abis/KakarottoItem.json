@@ -2,51 +2,18 @@
   {
     "type": "constructor",
     "inputs": [
+      { "name": "_initialOwner", "type": "address", "internalType": "address" },
       { "name": "_name", "type": "string", "internalType": "string" },
       { "name": "_symbol", "type": "string", "internalType": "string" },
-      { "name": "_initialOwner", "type": "address", "internalType": "address" },
-      {
-        "name": "_accountRegistry",
-        "type": "address",
-        "internalType": "contract IERC6551Registry"
-      },
       { "name": "__baseURI", "type": "string", "internalType": "string" }
     ],
     "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "BASE_EXP",
+    "name": "MAX_ATTRIBUTE_COUNT",
     "inputs": [],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "LEVELUP_ACTION",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "bytes32", "internalType": "bytes32" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "MAX_ATTRIBUTE",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "MAX_LEVEL",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "MAX_RARITY",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [{ "name": "", "type": "uint8", "internalType": "uint8" }],
     "stateMutability": "view"
   },
   {
@@ -58,22 +25,9 @@
   },
   {
     "type": "function",
-    "name": "PRECISION",
+    "name": "MIN_ATTRIBUTE_COUNT",
     "inputs": [],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "accountRegistry",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "contract IERC6551Registry"
-      }
-    ],
+    "outputs": [{ "name": "", "type": "uint8", "internalType": "uint8" }],
     "stateMutability": "view"
   },
   {
@@ -106,29 +60,6 @@
   },
   {
     "type": "function",
-    "name": "createNFT",
-    "inputs": [
-      { "name": "_tokenURI", "type": "string", "internalType": "string" },
-      { "name": "_creator", "type": "address", "internalType": "address" },
-      {
-        "name": "_createNftSignature",
-        "type": "bytes",
-        "internalType": "bytes"
-      },
-      { "name": "rarity", "type": "uint256", "internalType": "uint256" },
-      { "name": "power", "type": "uint256", "internalType": "uint256" },
-      { "name": "defend", "type": "uint256", "internalType": "uint256" },
-      { "name": "agility", "type": "uint256", "internalType": "uint256" },
-      { "name": "intelligence", "type": "uint256", "internalType": "uint256" },
-      { "name": "luck", "type": "uint256", "internalType": "uint256" }
-    ],
-    "outputs": [
-      { "name": "_account", "type": "address", "internalType": "address" }
-    ],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "getApproved",
     "inputs": [
       { "name": "tokenId", "type": "uint256", "internalType": "uint256" }
@@ -138,25 +69,7 @@
   },
   {
     "type": "function",
-    "name": "getCharacterExp",
-    "inputs": [
-      { "name": "_tokenId", "type": "uint256", "internalType": "uint256" }
-    ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getCharacterExpNeeded",
-    "inputs": [
-      { "name": "_tokenId", "type": "uint256", "internalType": "uint256" }
-    ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getCharacterInfo",
+    "name": "getItemInformation",
     "inputs": [
       { "name": "_tokenId", "type": "uint256", "internalType": "uint256" }
     ],
@@ -164,44 +77,34 @@
       {
         "name": "",
         "type": "tuple",
-        "internalType": "struct NFTLibrary.CharacterNftInformation",
+        "internalType": "struct NFTLibrary.ItemNftInformation",
         "components": [
           { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
           { "name": "rarity", "type": "uint256", "internalType": "uint256" },
-          { "name": "power", "type": "uint256", "internalType": "uint256" },
-          { "name": "defend", "type": "uint256", "internalType": "uint256" },
-          { "name": "agility", "type": "uint256", "internalType": "uint256" },
           {
-            "name": "intelligence",
+            "name": "attributeCount",
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "luck", "type": "uint256", "internalType": "uint256" }
+          {
+            "name": "attributes",
+            "type": "tuple[]",
+            "internalType": "struct NFTLibrary.ItemAttribute[]",
+            "components": [
+              {
+                "name": "attribute",
+                "type": "uint8",
+                "internalType": "enum NFTLibrary.Attribute"
+              },
+              { "name": "value", "type": "uint256", "internalType": "uint256" },
+              { "name": "isIncrease", "type": "bool", "internalType": "bool" },
+              { "name": "isPercentage", "type": "bool", "internalType": "bool" }
+            ]
+          }
         ]
       }
     ],
     "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getCharacterLevel",
-    "inputs": [
-      { "name": "_tokenId", "type": "uint256", "internalType": "uint256" }
-    ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "increaseExp",
-    "inputs": [
-      { "name": "_tokenId", "type": "uint256", "internalType": "uint256" },
-      { "name": "_value", "type": "uint256", "internalType": "uint256" }
-    ],
-    "outputs": [
-      { "name": "characterExp", "type": "uint256", "internalType": "uint256" }
-    ],
-    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -215,13 +118,35 @@
   },
   {
     "type": "function",
-    "name": "levelUp",
+    "name": "mint",
     "inputs": [
-      { "name": "_tokenId", "type": "uint256", "internalType": "uint256" }
+      { "name": "_creator", "type": "address", "internalType": "address" },
+      {
+        "name": "_createNftSignature",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      { "name": "_tokenURI", "type": "string", "internalType": "string" },
+      { "name": "_rarity", "type": "uint256", "internalType": "uint256" },
+      {
+        "name": "_attributeCount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "_attributes",
+        "type": "uint8[]",
+        "internalType": "enum NFTLibrary.Attribute[]"
+      },
+      {
+        "name": "_attributeValues",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      },
+      { "name": "_isIncreases", "type": "bool[]", "internalType": "bool[]" },
+      { "name": "_isPercentages", "type": "bool[]", "internalType": "bool[]" }
     ],
-    "outputs": [
-      { "name": "level", "type": "uint256", "internalType": "uint256" }
-    ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
     "stateMutability": "nonpayable"
   },
   {
@@ -308,10 +233,19 @@
   },
   {
     "type": "function",
-    "name": "setURI",
+    "name": "setTokenURI",
     "inputs": [
-      { "name": "_tokenId", "type": "uint256", "internalType": "uint256" },
+      { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
       { "name": "_tokenURI", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setTreasureAddress",
+    "inputs": [
+      { "name": "_treasure", "type": "address", "internalType": "address" }
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
@@ -367,6 +301,13 @@
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "treasure",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -450,81 +391,25 @@
   },
   {
     "type": "event",
-    "name": "KakarottoCharacterCreated",
+    "name": "ItemCreated",
     "inputs": [
       {
         "name": "tokenId",
         "type": "uint256",
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256"
       },
       {
-        "name": "tokenUri",
+        "name": "receiver",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenURI",
         "type": "string",
         "indexed": false,
         "internalType": "string"
-      },
-      {
-        "name": "owner",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      },
-      {
-        "name": "account",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "KakarottoCharacterIncreasedExp",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "fromExp",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      },
-      {
-        "name": "toExp",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "KakarottoCharacterLevelUp",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "fromLevel",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      },
-      {
-        "name": "toLevel",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -586,8 +471,6 @@
     ],
     "anonymous": false
   },
-  { "type": "error", "name": "CharacterCreatedFailed", "inputs": [] },
-  { "type": "error", "name": "CharacterLevelUpFailed", "inputs": [] },
   { "type": "error", "name": "ECDSAInvalidSignature", "inputs": [] },
   {
     "type": "error",
