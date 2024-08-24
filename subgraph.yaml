@@ -6,9 +6,9 @@ dataSources:
     name: KakarottoCharacter
     network: sepolia
     source:
-      address: "0x297276a7d6f89467574c58ae34e34a8c5e15ac3c"
+      address: "0xed4f50ad8898853095203d49b63878d81bfee4d5"
       abi: KakarottoCharacter
-      startBlock: 6457578
+      startBlock: 6556596
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -35,22 +35,20 @@ dataSources:
     name: KakarottoTreasure
     network: sepolia
     source:
-      address: "0x89f34087da5805287d9e192ee3d260c5c44a3748"
+      address: "0x3157615193dfb2eb9cb8346074bd4a7c10b4a764"
       abi: KakarottoTreasure
-      startBlock: 6457578
+      startBlock: 6556596
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Treasure
-        - TreasureBalance
+        - TreasureAccount
       abis:
         - name: KakarottoTreasure
           file: ./abis/KakarottoTreasure.json
       eventHandlers:
-        - event: OpenTreasure(indexed address,uint256,uint256)
-          handler: handleOpenTreasure
         - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
           handler: handleTransferBatch
         - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
@@ -60,9 +58,9 @@ dataSources:
     name: KakarottoItem
     network: sepolia
     source:
-      address: "0x20994a1b0f3aa64fdee575783ba4aa1daa7b14d4"
+      address: "0x5d3b399b58aa37bae80dbf7303e46c10e80529a7"
       abi: KakarottoItem
-      startBlock: 6457578
+      startBlock: 6556596
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -84,9 +82,9 @@ dataSources:
     name: KakarottoMarketplace
     network: sepolia
     source:
-      address: "0x3a5fd464fa05da9388b0c0f5fac24ec5329ffe7e"
+      address: "0x50b7210384431eebd54d1b94dbd14a4c13763247"
       abi: KakarottoMarketplace
-      startBlock: 6457578
+      startBlock: 6556597
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -111,9 +109,9 @@ dataSources:
     name: ERC721Bid
     network: sepolia
     source:
-      address: "0x922ceb9c31cbb84f10826e324222e1d0b3e071d9"
+      address: "0x3713b9a513d62a10686c5af6cb8e4b7c8c36bd5b"
       abi: ERC721Bid
-      startBlock: 6457578
+      startBlock: 6556792
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

@@ -4,20 +4,18 @@ import * as addresses from "../../data/addresses"
 
 export function getCategories(contractAddress: string): string { 
     let category = ""
-    switch (contractAddress) {
-        case addresses.KakarottoCharacter:
-            category = categories.CHARACTER
-            break
-        case addresses.KakarottoTreasure:
-            category = categories.TREASURE
-            break
-        case addresses.KakarottoItem:
-            category = categories.ITEM
-            break
-        default:
-            log.warning('Contract address {} not being monitored', [contractAddress])
-            category = contractAddress
-            break
+    if (contractAddress == addresses.KakarottoCharacter) {
+        category = categories.CHARACTER
+    }
+    else if (contractAddress == addresses.KakarottoTreasure) {
+        category = categories.TREASURE
+    }
+    else if (contractAddress == addresses.KakarottoItem) {
+        category = categories.ITEM
+    }
+    else {
+        log.warning('Contract address {} not being monitored', [contractAddress])
+        category = contractAddress
     }
     return category
  }

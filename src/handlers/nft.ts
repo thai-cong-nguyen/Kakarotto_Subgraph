@@ -2,12 +2,13 @@ import { BigInt } from "@graphprotocol/graph-ts"
 import { Character, Item, NFT } from "../../generated/schema"
 import { Transfer } from "../../generated/templates/ERC721/ERC721"
 import { getCategories } from "../modules/category"
-import { cancelActiveOrder, clearNFTOrderProperties, getNFTId, getTokenURI, isMint } from "../modules/nft"
+import { cancelActiveOrder, clearNFTOrderProperties, getNFTId, getTokenURI, isMint, isTransferERC6551Account } from "../modules/nft"
 import * as addresses from "../data/addresses"
 import * as categories from "../modules/category/categories"
 import { buildCountFromNFT } from "../modules/count"
 import { buildCharacterFromNFT } from "../modules/character"
 import { buildItemFromNFT } from "../modules/item"
+import { createOrLoadAccount } from "../modules/account"
 
 export function handleTransfer(event: Transfer): void {
     if (event.params.tokenId.toString() == "") {
@@ -25,7 +26,9 @@ export function handleTransfer(event: Transfer): void {
     nft.tokenId = event.params.tokenId
     nft.contractAddress = event.address
     nft.category = category
-    nft.owner = event.params.to.toHex()
+    if (!isTransferERC6551Account(event)) {
+        nft.owner = event.params.to.toHex()
+    }
     // Timestamps
     nft.updatedAt = event.block.timestamp
     nft.soldAt = null
@@ -72,7 +75,6 @@ export function handleTransfer(event: Transfer): void {
             nft.searchIsItem = true
         }
     }
-    else if (category == categories.TREASURE) {
-
-    }
+    createOrLoadAccount(event.params.to)
+    nft.save()
 }

@@ -1,8 +1,8 @@
 import { Address, BigInt, log } from "@graphprotocol/graph-ts"
 import * as rarities from '../nft/rarity'
-import { TreasureAccount } from "../../../generated/schema"
-import { createOrLoadTreasureAccount, getTreasureAccountId } from "../treasureAccount"
-import { createOrLoadAccount } from "../account"
+import { KakarottoTreasure as KakarottoTreasureABI, TransferSingle } from "../../../generated/KakarottoTreasure/KakarottoTreasure"
+import * as addresses from '../../data/addresses'
+import { NFT, Treasure } from "../../../generated/schema"
 
 export function getTreasureRarity(
     contractAddress: Address,
@@ -27,35 +27,35 @@ export function getTreasureRarity(
 export function getTreasureId(
     contractAddress: Address,
     tokenId: BigInt
-) {
+): string {
     return contractAddress.toHexString() + "-" + tokenId.toString()
 }
 
-export function trackTreasureBalance(
-    contractAddress: Address,
-    tokenId: BigInt,
-    buyer: Address,
-    seller: Address,
-    amount: BigInt,
-): void {
-    const buyerId = getTreasureAccountId(contractAddress, tokenId, buyer)
-    const sellerId = getTreasureAccountId(contractAddress, tokenId, seller)
+export function isMint(event: TransferSingle): boolean {
+    return event.params.from.toHexString() == addresses.ZERO_ADDRESS
+}
 
-    let buyerTreasureBalance = TreasureAccount.load(buyerId)
-    let sellerTreasureBalance = TreasureAccount.load(sellerId)
+export function isBurn(event: TransferSingle): boolean {
+    return event.params.to.toHexString() == addresses.ZERO_ADDRESS
+}
 
-    if (sellerTreasureBalance == null || sellerTreasureBalance.balance.lt(amount)) {
-        log.warning('Not enough balance', [seller.toHexString()])
-        return
+export function getTokenURI(contractAddress: Address, tokenId: BigInt): string {
+    let contract = KakarottoTreasureABI.bind(contractAddress)
+    let tokenURICallResult = contract.try_uri(tokenId)
+    let tokenURI = ''
+    if (tokenURICallResult.reverted) {
+        log.warning('tokenURI call reverted for token {}', [tokenId.toString()])
     }
-
-    if (buyerTreasureBalance == null) {
-        buyerTreasureBalance = createOrLoadTreasureAccount(contractAddress, buyer, tokenId)
+    else {
+        tokenURI = tokenURICallResult.value
     }
+    return tokenURI
+}
 
-    buyerTreasureBalance.balance = buyerTreasureBalance.balance.plus(amount)
-    sellerTreasureBalance.balance = sellerTreasureBalance.balance.minus(amount)
+export function buildTreasureFromNFT(nft: NFT): Treasure {
+    let treasure = new Treasure(nft.id)
 
-    buyerTreasureBalance.save()
-    sellerTreasureBalance.save()
+    // Treasure
+
+    return treasure
 }

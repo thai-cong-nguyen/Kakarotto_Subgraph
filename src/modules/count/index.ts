@@ -30,26 +30,22 @@ export function buildCountFromNFT(nft: NFT): Count {
     let category = nft.category
     let count = buildCount()
 
-    switch (category) {
-        case categories.CHARACTER:
-            count.characterTotal += nft.amount
-            break
-        case categories.TREASURE:
-            count.treasureTotal += nft.amount
-            break
-        case categories.ITEM:
-            count.itemTotal += nft.amount
-            break
-        default:
-            break
+    if (category == categories.CHARACTER) {
+        count.characterTotal += nft.amount
+    }
+    else if (category == categories.TREASURE) {
+        count.treasureTotal += nft.amount
+    }
+    else if (category == categories.ITEM) {
+        count.itemTotal += nft.amount
     }
 
     return count as Count
 }
 
-export function buildCountFromSale(price: BigInt, feesCollectorCut: BigInt, amount: i32): Count {
+export function buildCountFromSale(price: BigInt, feesCollectorCut: BigInt): Count {
     let count = buildCount()
-    count.salesTotal = count.salesTotal + amount
+    count.salesTotal += 1
     count.creatorEarningTotal = count.creatorEarningTotal.plus(price.minus(feesCollectorCut))
     count.daoEarningTotal = count.daoEarningTotal.plus(
         feesCollectorCut.times(price).div(ONE_MILLION)

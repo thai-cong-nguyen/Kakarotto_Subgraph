@@ -56,8 +56,10 @@ export function handleBidAccepted(event: BidAcceptedEvent): void {
     if (bid == null || bid.nft == null) {
         return
     }
-
-    let nft = NFT.load(bid.nft)
+    if (bid.nft == null || bid.nft == "") {
+        return
+    }
+    let nft = NFT.load(bid.nft as string)
     if (nft == null) {
         return
     }
@@ -78,7 +80,6 @@ export function handleBidAccepted(event: BidAcceptedEvent): void {
         event.params._bidder,
         event.params._seller,
         nft.id,
-        1,
         bid.price,
         bidContract.feePercentage(),
         event.block.timestamp,
@@ -97,7 +98,10 @@ export function handleBidCancelled(event: BidCancelledEvent): void {
     if (bid == null || bid.nft == null) {
         return
     }
-    let nft = NFT.load(bid.nft)
+    if (bid.nft == null || bid.nft == "") {
+        return
+    }
+    let nft = NFT.load(bid.nft as string)
     if (nft == null) {
         return
     }

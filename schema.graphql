@@ -21,6 +21,7 @@ type Account @entity {
   address: Bytes! # address
   nfts: [NFT!] @derivedFrom(field: "owner")
   treasures: [Treasure!] @derivedFrom(field: "owner")
+  treasureAccounts: [TreasureAccount!] @derivedFrom(field: "account")
 
   # analytics
   sales: Int!
@@ -105,14 +106,12 @@ type Treasure @entity {
   nft: NFT! @derivedFrom(field: "treasure")
 
   name: String # string
-  createdAt: BigInt!
-  updatedAt: BigInt!
   owner: [Account!] @derivedFrom(field: "treasures")
 }
 
 type TreasureAccount @entity {
   id: ID!
-  account: Account!
+  account: Account! @derivedFrom(field: "treasureAccounts")
   treasure: Treasure!
   balance: BigInt!
 }

@@ -4,7 +4,6 @@ import { buildCountFromSale } from "../count"
 import { createOrLoadAccount } from "../account"
 import { ONE_MILLION } from "../util"
 import * as categories from "../category/categories"
-import { trackTreasureBalance } from "../treasure"
 
 export const BID_SALE_TYPE = 'bid'
 export const ORDER_SALE_TYPE = 'order'
@@ -14,7 +13,6 @@ export function trackSale(
     buyer: Address,
     seller: Address,
     nftId: string,
-    amount: i32,
     price: BigInt,
     feesCollectorCut: BigInt,
     timestamp: BigInt,
@@ -24,7 +22,7 @@ export function trackSale(
         return
     }
 
-    let count = buildCountFromSale(price, feesCollectorCut, amount)
+    let count = buildCountFromSale(price, feesCollectorCut)
     count.save()
 
     let nft = NFT.load(nftId)
@@ -33,17 +31,13 @@ export function trackSale(
         return
     }
 
-    if (nft.category == categories.TREASURE) {
-        trackTreasureBalance(nft.contractAddress as Address, nft.tokenId, buyer, seller, BigInt.fromI32(amount))
-    }
-
     let saleId = BigInt.fromI32(count.salesTotal).toString()
     let sale = new Sale(saleId)
     sale.type = type
     sale.buyer = buyer
     sale.seller = seller
     sale.nft = nftId
-    sale.amount = amount
+    sale.amount = 1
     sale.price = price  
     sale.transactionHash = transactionHash
     sale.timestamp = timestamp
@@ -66,7 +60,7 @@ export function trackSale(
     nft.sales += 1
     nft.volume = nft.volume.plus(price)
     nft.updatedAt = timestamp
-    nft.amount += amount
+    nft.amount += 1
     nft.save()
 
     let analyticsDayData = updateAnalyticsDayData(sale, feesCollectorCut)
