@@ -23,19 +23,17 @@ dataSources:
           file: ./abis/KakarottoCharacter.json
       eventHandlers:
         - event: KakarottoCharacterCreated(uint256,string,address,indexed address)
-          handler: handleKakarottoCharacterCreated
+          handler: handleCharacterCreated
         - event: KakarottoCharacterLevelUp(indexed uint256,uint256,uint256)
-          handler: handleKakarottoCharacterLevelUp
+          handler: handleCharacterLevelUp
         - event: KakarottoCharacterIncreasedExp(indexed uint256,uint256,uint256)
-          handler: handleKakarottoCharacterIncreasedExp
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
+          handler: handleCharacterIncreasedExp
       file: ./src/handlers/character.ts
   - kind: ethereum
     name: KakarottoTreasure
     network: sepolia
     source:
-      address: "0x3157615193dfb2eb9cb8346074bd4a7c10b4a764"
+      address: "0xCF2CFF39E29Da4C0210b16be7e3E717d04ED9A7E"
       abi: KakarottoTreasure
       startBlock: 6556596
     mapping:
@@ -75,8 +73,6 @@ dataSources:
       eventHandlers:
         - event: ItemCreated(indexed uint256,indexed address,string)
           handler: handleItemCreated
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
       file: ./src/handlers/item.ts
   - kind: ethereum
     name: KakarottoMarketplace
