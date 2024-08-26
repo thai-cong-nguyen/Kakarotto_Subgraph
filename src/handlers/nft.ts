@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import { Character, Item, NFT } from "../../generated/schema"
 import { Transfer } from "../../generated/templates/ERC721/ERC721"
 import { getCategories } from "../modules/category"
@@ -15,19 +15,18 @@ export function handleTransfer(event: Transfer): void {
         return 
     }
 
-    let contractAddress = event.address.toHexString()
-    let category = getCategories(contractAddress)
+    let category = getCategories(event.address)
     let id = getNFTId(category, event.address, event.params.tokenId)
-    let toAddress = event.params.to.toHex()
+    let toAddress = (changetype<Bytes>(event.params.to)).toHexString()
 
     let nft = new NFT(id)
     
     // Normal Transfer
     nft.tokenId = event.params.tokenId
-    nft.contractAddress = event.address
+    nft.contractAddress = changetype<Bytes>(event.address)
     nft.category = category
     if (!isTransferERC6551Account(event)) {
-        nft.owner = event.params.to.toHex()
+        nft.owner = (changetype<Bytes>(event.params.to)).toHexString()
     }
     // Timestamps
     nft.updatedAt = event.block.timestamp

@@ -13,7 +13,7 @@ export function handleItemCreated(event: ItemCreated): void {
     if (!item) {
         return
     }
-    const category = getCategories(event.address.toHexString())
+    const category = getCategories(event.address)
     const nftId = getNFTId(category, event.address, event.params.tokenId)
     let nft = NFT.load(nftId)
     if (!nft) {

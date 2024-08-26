@@ -13,26 +13,26 @@ import { getNFTId, updateNFTOrderProperties } from "../modules/nft"
 import * as categories from "../modules/category/categories"
 import * as statuses from "../modules/order/status"
 import { ORDER_SALE_TYPE, trackSale } from "../modules/analytics"
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 
 
 export function handleOrderCreated(event: OrderCreatedEvent): void {
-  const category = getCategories(event.params.nftAddress.toHexString())
+  const category = getCategories(event.params.nftAddress)
   const nftId = getNFTId(category, event.params.nftAddress, event.params.assetId)
 
   let nft = NFT.load(nftId)
   if (nft != null) {
-    const orderId = event.params.id.toHex()
+    const orderId = event.params.id.toHexString()
 
     let order = new Order(orderId)
-    order.marketplaceAddress = event.address
+    order.marketplaceAddress = changetype<Bytes>(event.address)
     order.category = category
     order.nft = nftId
-    order.nftAddress = event.params.nftAddress
+    order.nftAddress = changetype<Bytes>(event.params.nftAddress)
     order.tokenId = event.params.assetId
     order.amount = 1
     order.transactionHash = event.transaction.hash
-    order.owner = event.params.seller
+    order.owner = changetype<Bytes>(event.params.seller)
     order.price = event.params.priceInWei
     order.status = statuses.OPEN
     order.blockNumber = event.block.number
@@ -43,13 +43,13 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
 }
 
 export function handleOrderSuccessful(event: OrderSuccessfulEvent): void {
-  const category = getCategories(event.params.nftAddress.toHexString()) 
+  const category = getCategories(event.params.nftAddress) 
   const nftId = getNFTId(
     category,
     event.params.nftAddress,
     event.params.assetId
   )
-  const orderId = event.params.id.toHex()
+  const orderId = event.params.id.toHexString()
   
   let order = Order.load(orderId)
   if (order == null) {
@@ -58,7 +58,7 @@ export function handleOrderSuccessful(event: OrderSuccessfulEvent): void {
 
   order.category = category
   order.status = statuses.SOLD
-  order.buyer = event.params.buyer
+  order.buyer = changetype<Bytes>(event.params.buyer)
   order.price = event.params.totalPrice
   order.blockNumber = event.block.number
   order.updatedAt = event.block.timestamp
@@ -69,7 +69,7 @@ export function handleOrderSuccessful(event: OrderSuccessfulEvent): void {
     return
   }
 
-  nft.owner = event.params.buyer.toHexString()
+  nft.owner = (changetype<Bytes>(event.params.buyer)).toHexString()
   nft.updatedAt = event.block.timestamp
   nft = updateNFTOrderProperties(nft, order)
   nft.save()
@@ -82,7 +82,7 @@ export function handleOrderSuccessful(event: OrderSuccessfulEvent): void {
 }
 
 export function handleOrderCancelled(event: OrderCancelledEvent): void {
-  const category = getCategories(event.params.nftAddress.toHexString())
+  const category = getCategories(event.params.nftAddress)
   const nftId = getNFTId(
     category,
     event.params.nftAddress,

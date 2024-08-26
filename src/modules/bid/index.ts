@@ -1,9 +1,9 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts"
+import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts"
 
 export function getBidId(
     contractAddress: Address,
     tokenId: BigInt,
     bidder: Address
 ): string {
-    return contractAddress.toHexString() + "-" + tokenId.toString() + "-" + bidder.toHexString()
+    return (changetype<Bytes>(contractAddress)).toHexString() + "-" + tokenId.toString() + "-" + (changetype<Bytes>(bidder)).toHexString()
 }

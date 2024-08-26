@@ -1,4 +1,4 @@
-import { Address, BigInt, log } from "@graphprotocol/graph-ts"
+import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts"
 import { KakarottoItem as KakarottoItemABI } from "../../../generated/KakarottoItem/KakarottoItem"
 import * as rarities from '../nft/rarity'
 import { Item, NFT } from "../../../generated/schema"
@@ -23,7 +23,7 @@ export function getItemRarity(
             return rarities.DIAMOND
     }
 
-    log.warning('Can not find rarity', [tokenId.toString(), contractAddress.toHexString()])
+    log.warning('Can not find rarity', [tokenId.toString(), (changetype<Bytes>(contractAddress)).toHexString()])
     return ""
 }
 

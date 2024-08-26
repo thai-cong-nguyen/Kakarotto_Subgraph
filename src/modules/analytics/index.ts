@@ -34,8 +34,8 @@ export function trackSale(
     let saleId = BigInt.fromI32(count.salesTotal).toString()
     let sale = new Sale(saleId)
     sale.type = type
-    sale.buyer = buyer
-    sale.seller = seller
+    sale.buyer = changetype<Bytes>(buyer)
+    sale.seller = changetype<Bytes>(seller)
     sale.nft = nftId
     sale.amount = 1
     sale.price = price  
@@ -60,7 +60,6 @@ export function trackSale(
     nft.sales += 1
     nft.volume = nft.volume.plus(price)
     nft.updatedAt = timestamp
-    nft.amount += 1
     nft.save()
 
     let analyticsDayData = updateAnalyticsDayData(sale, feesCollectorCut)

@@ -1,4 +1,4 @@
-import { Bytes, BigInt } from "@graphprotocol/graph-ts"
+import { Bytes, BigInt, BigDecimal } from "@graphprotocol/graph-ts"
 import { Count, NFT, Order } from "../../../generated/schema"
 import * as categories from "../category/categories"
 import { ONE_MILLION } from "../util"
@@ -31,13 +31,13 @@ export function buildCountFromNFT(nft: NFT): Count {
     let count = buildCount()
 
     if (category == categories.CHARACTER) {
-        count.characterTotal += nft.amount
+        count.characterTotal += 1
     }
     else if (category == categories.TREASURE) {
-        count.treasureTotal += nft.amount
+        count.treasureTotal += nft.amount.toI32()
     }
     else if (category == categories.ITEM) {
-        count.itemTotal += nft.amount
+        count.itemTotal += 1
     }
 
     return count as Count

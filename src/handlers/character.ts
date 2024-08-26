@@ -1,7 +1,7 @@
 
 import { KakarottoCharacterCreated, KakarottoCharacterLevelUp, KakarottoCharacter as KakarottoCharacterABI, KakarottoCharacterIncreasedExp } from "../../generated/KakarottoCharacter/KakarottoCharacter"
 import { Account, Character, CharacterAccount, CharacterAttribute, NFT } from '../../generated/schema';
-import { Address, BigInt, log } from "@graphprotocol/graph-ts"
+import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts"
 import { getNFTId } from "../modules/nft";
 import { getCategories } from "../modules/category";
 import { getCharacterId } from "../modules/character";
@@ -10,24 +10,24 @@ import { createCharacterAttribute, getCharacterAttributeId } from "../modules/ch
 import * as attributes from "../modules/attribute/attribute";
 
 export function handleCharacterCreated(event: KakarottoCharacterCreated): void {
-    let characterAccount = CharacterAccount.load(event.params.account.toHexString())
+    let characterAccount = CharacterAccount.load((changetype<Bytes>(event.params.account)).toHexString())
     if (characterAccount) {
-        log.error("Character already exists: {}", [event.params.account.toHexString()])
+        log.error("Character already exists: {}", [(changetype<Bytes>(event.params.account)).toHexString()])
         return 
     }
     let character = Character.load(getCharacterId(event.address, event.params.tokenId))
     if (!character) {
         return
     }
-    const category = getCategories(event.address.toHexString())
+    const category = getCategories(event.address)
     let nft = NFT.load(getNFTId(category, event.address, event.params.tokenId))
     if (!nft) {
         return
     }
 
     // ERC-6551 Account
-    characterAccount = new CharacterAccount(event.params.account.toHexString())
-    characterAccount.contractAddress = event.address
+    characterAccount = new CharacterAccount((changetype<Bytes>(event.params.account)).toHexString())
+    characterAccount.contractAddress = changetype<Bytes>(event.address)
     characterAccount.save()
 
     const characterInfo = KakarottoCharacterABI.bind(event.address).getCharacterInfo(event.params.tokenId)

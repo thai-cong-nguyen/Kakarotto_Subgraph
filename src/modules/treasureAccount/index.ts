@@ -1,11 +1,11 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts"
+import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts';
 import { Account, TreasureAccount } from "../../../generated/schema"
 import { getTreasureId } from "../treasure"
 import { KakarottoTreasure as KakarottoTreasureABI } from "../../../generated/KakarottoTreasure/KakarottoTreasure"
 import { createOrLoadAccount } from "../account"
 
 export function getTreasureAccountId(contractAddress: Address, tokenId: BigInt, account: Address): string {
-    return account.toHexString() + "-" + contractAddress.toHexString() + "-" + tokenId.toString()
+    return (changetype<Bytes>(account)).toHexString() + "-" + (changetype<Bytes>(contractAddress)).toHexString() + "-" + tokenId.toString()
 }
 
 export function createOrLoadTreasureAccount(contractAddress: Address, accountAddress: Address, tokenId: BigInt): TreasureAccount {

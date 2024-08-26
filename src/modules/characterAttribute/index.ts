@@ -1,9 +1,9 @@
-import { BigInt, Address } from "@graphprotocol/graph-ts";
+import { BigInt, Address, Bytes } from "@graphprotocol/graph-ts";
 import { KakarottoCharacterCreated } from "../../../generated/KakarottoCharacter/KakarottoCharacter";
 import { Character, CharacterAttribute } from "../../../generated/schema";
 
 export function getCharacterAttributeId(contractAddress: Address, tokenId: BigInt, attributeName: string): string {
-    return contractAddress.toHexString() + "-" + tokenId.toString() + "-" + attributeName
+    return (changetype<Bytes>(contractAddress)).toHexString() + "-" + tokenId.toString() + "-" + attributeName
 }
 
 export function createCharacterAttribute(event: KakarottoCharacterCreated, attributeName: string, value: BigInt): CharacterAttribute {

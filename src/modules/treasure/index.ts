@@ -1,4 +1,4 @@
-import { Address, BigInt, log } from "@graphprotocol/graph-ts"
+import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts"
 import * as rarities from '../nft/rarity'
 import { KakarottoTreasure as KakarottoTreasureABI, TransferSingle } from "../../../generated/KakarottoTreasure/KakarottoTreasure"
 import * as addresses from '../../data/addresses'
@@ -20,7 +20,7 @@ export function getTreasureRarity(
         case rarities.RarityEnum.DIAMOND:
             return rarities.DIAMOND
     }
-    log.warning('Can not find rarity', [tokenId.toString(), contractAddress.toHexString()])
+    log.warning('Can not find rarity', [tokenId.toString(), (changetype<Bytes>(contractAddress)).toHexString()])
     return ""
 }
 
@@ -28,15 +28,15 @@ export function getTreasureId(
     contractAddress: Address,
     tokenId: BigInt
 ): string {
-    return contractAddress.toHexString() + "-" + tokenId.toString()
+    return (changetype<Bytes>(contractAddress)).toHexString() + "-" + tokenId.toString()
 }
 
 export function isMint(event: TransferSingle): boolean {
-    return event.params.from.toHexString() == addresses.ZERO_ADDRESS
+    return (changetype<Bytes>(event.params.from)).toHexString() == addresses.ZERO_ADDRESS
 }
 
 export function isBurn(event: TransferSingle): boolean {
-    return event.params.to.toHexString() == addresses.ZERO_ADDRESS
+    return (changetype<Bytes>(event.params.to)).toHexString() == addresses.ZERO_ADDRESS
 }
 
 export function getTokenURI(contractAddress: Address, tokenId: BigInt): string {

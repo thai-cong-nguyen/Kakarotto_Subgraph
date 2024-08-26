@@ -1,4 +1,4 @@
-import { Address } from "@graphprotocol/graph-ts"
+import { Address, Bytes } from "@graphprotocol/graph-ts"
 import { BidAccepted as BidAcceptedEvent, BidCancelled as BidCancelledEvent, BidCreated as BidCreatedEvent, ERC721Bid as ERC721BidABI } from "../../generated/ERC721Bid/ERC721Bid"
 import { Bid, NFT } from "../../generated/schema"
 import { getBidId } from "../modules/bid"
@@ -8,7 +8,7 @@ import * as status from "../modules/order/status"
 import { BID_SALE_TYPE, trackSale } from "../modules/analytics"
 
 export function handleBidCreated(event: BidCreatedEvent): void {
-    const category = getCategories(event.params._tokenAddress.toHexString())
+    const category = getCategories(event.params._tokenAddress)
     const nftId = getNFTId(
         category, 
         event.params._tokenAddress,
@@ -23,14 +23,14 @@ export function handleBidCreated(event: BidCreatedEvent): void {
     let bid = new Bid(bidId)
 
     if (nft != null) {
-        bid.bidAddress = event.address
+        bid.bidAddress = changetype<Bytes>(event.address)
         bid.category = category
         bid.nft = nftId
-        bid.nftAddress = event.params._tokenAddress
+        bid.nftAddress = changetype<Bytes>(event.params._tokenAddress)
         bid.tokenId = event.params._tokenId
-        bid.bidder = event.params._bidder
+        bid.bidder = changetype<Bytes>(event.params._bidder)
         // Assumption: The owner of the NFT is the seller when the bid is created
-        bid.seller = Address.fromString(nft.owner)
+        bid.seller = changetype<Bytes>(nft.owner)
         bid.price = event.params._price
         bid.status = status.OPEN
         bid.blockchainId = event.params._id.toHexString()
@@ -65,7 +65,7 @@ export function handleBidAccepted(event: BidAcceptedEvent): void {
     }
 
     bid.status = status.SOLD
-    bid.seller = event.params._seller
+    bid.seller = changetype<Bytes>(event.params._seller)
     bid.blockNumber = event.block.number
     bid.updatedAt = event.block.timestamp
     bid.save()

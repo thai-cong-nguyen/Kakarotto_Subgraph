@@ -37,9 +37,9 @@ type NFT @entity {
   category: Category! # string
   creator: Bytes! # address
   owner: Account!
-  amount: Int!
+  amount: BigInt!
   tokenURI: String # string
-  rarity: Rarity! # string
+  rarity: Rarity # string
   orders: [Order!]! @derivedFrom(field: "nft")
   bids: [Bid!]! @derivedFrom(field: "nft")
   activeOrder: Order

@@ -1,16 +1,16 @@
-import { log, BigInt, Address } from '@graphprotocol/graph-ts'
+import { log, BigInt, Address, Bytes } from '@graphprotocol/graph-ts'
 import { NFT, Order, Bid, CharacterAccount } from '../../../generated/schema'
 import { Transfer as TransferEvent, ERC721 } from '../../../generated/templates/ERC721/ERC721'
 import * as status from '../order/status'
 import * as addresses from '../../data/addresses'
 
 export function isMint(event: TransferEvent): boolean {
-  return event.params.from.toHexString() == addresses.ZERO_ADDRESS
+  return (changetype<Bytes>(event.params.from)).toHexString() == addresses.ZERO_ADDRESS
 }
 
 export function isTransferERC6551Account(event: TransferEvent): boolean {
-  const from = event.params.from.toHexString()
-  const to = event.params.to.toHexString()
+  const from = (changetype<Bytes>(event.params.from)).toHexString()
+  const to = (changetype<Bytes>(event.params.to)).toHexString()
 
   let erc6551Account = CharacterAccount.load(from)
   if (erc6551Account != null) {
@@ -29,7 +29,7 @@ export function getNFTId(
   contractAddress: Address,
   tokenId: BigInt
 ): string {
-  return category + '-' + contractAddress.toHexString() + '-' + tokenId.toString()
+  return category + '-' + (changetype<Bytes>(contractAddress)).toHexString() + '-' + tokenId.toString()
 }
 
 export function getTokenURI(event: TransferEvent): string {
