@@ -30,7 +30,7 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
     order.nft = nftId
     order.nftAddress = changetype<Bytes>(event.params.nftAddress)
     order.tokenId = event.params.assetId
-    order.amount = 1
+    order.amount = BigInt.fromI32(1)
     order.transactionHash = event.transaction.hash
     order.owner = changetype<Bytes>(event.params.seller)
     order.price = event.params.priceInWei

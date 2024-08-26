@@ -8,8 +8,8 @@ export function createOrLoadAccount(accountAddress: Address): Account {
     if (account == null) {
       account = new Account(accountAddressBytes.toHexString()) 
       account.address = changetype<Bytes>(accountAddress)
-      account.sales = 0
-      account.purchases = 0
+      account.sales = BigInt.fromI32(0)
+      account.purchases = BigInt.fromI32(0)
       account.earned = BigInt.fromI32(0)
       account.spent = BigInt.fromI32(0)
     }

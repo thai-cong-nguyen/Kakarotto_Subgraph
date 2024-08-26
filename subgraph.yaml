@@ -33,9 +33,9 @@ dataSources:
     name: KakarottoTreasure
     network: sepolia
     source:
-      address: "0xCF2CFF39E29Da4C0210b16be7e3E717d04ED9A7E"
+      address: "0xcf2cff39e29da4c0210b16be7e3e717d04ed9a7e"
       abi: KakarottoTreasure
-      startBlock: 6556596
+      startBlock: 6567743
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

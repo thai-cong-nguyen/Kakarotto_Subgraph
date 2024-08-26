@@ -53,8 +53,12 @@ export function getTokenURI(contractAddress: Address, tokenId: BigInt): string {
 }
 
 export function buildTreasureFromNFT(nft: NFT): Treasure {
-    let treasure = new Treasure(nft.id)
-
+    let treasure = Treasure.load(nft.id)
+    if (treasure == null) {
+        treasure = new Treasure(nft.id)
+        treasure.tokenId = nft.tokenId
+        treasure.tokenURI = nft.tokenURI
+    }
     // Treasure
 
     return treasure

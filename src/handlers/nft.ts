@@ -33,7 +33,7 @@ export function handleTransfer(event: Transfer): void {
     nft.soldAt = null
     nft.transferredAt = event.block.timestamp
     // analytics
-    nft.sales = 0
+    nft.sales = BigInt.fromI32(0)
     nft.volume = BigInt.fromI32(0)
 
     nft.tokenURI = getTokenURI(event)

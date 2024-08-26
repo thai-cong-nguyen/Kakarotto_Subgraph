@@ -1,17 +1,17 @@
 type Count @entity {
   id: ID!
 
-  orderTotal: Int!
-  orderCharacterTotal: Int!
-  orderTreasureTotal: Int!
-  orderItemTotal: Int!
+  orderTotal: BigInt!
+  orderCharacterTotal: BigInt!
+  orderTreasureTotal: BigInt!
+  orderItemTotal: BigInt!
 
-  characterTotal: Int!
-  treasureTotal: Int!
-  itemTotal: Int!
+  characterTotal: BigInt!
+  treasureTotal: BigInt!
+  itemTotal: BigInt!
 
-  started: Int!
-  salesTotal: Int!
+  started: BigInt!
+  salesTotal: BigInt!
   creatorEarningTotal: BigInt!
   daoEarningTotal: BigInt!
 }
@@ -24,8 +24,8 @@ type Account @entity {
   treasureAccounts: [TreasureAccount!] @derivedFrom(field: "account")
 
   # analytics
-  sales: Int!
-  purchases: Int!
+  sales: BigInt!
+  purchases: BigInt!
   spent: BigInt!
   earned: BigInt!
 }
@@ -55,7 +55,7 @@ type NFT @entity {
   treasure: Treasure
 
   # analytics
-  sales: Int!
+  sales: BigInt!
   volume: BigInt!
 
   # search indexes
@@ -71,7 +71,6 @@ type NFT @entity {
   searchCharacterAttribute: [CharacterAttribute!]
 
   searchIsTreasure: Boolean
-  searchTreasureAmount: Int
 
   searchIsItem: Boolean
   searchItemAttribute: [ItemAttribute!]
@@ -138,7 +137,7 @@ type Order @entity {
   nft: NFT
   nftAddress: Bytes! # address
   tokenId: BigInt! # uint256
-  amount: Int!
+  amount: BigInt!
   transactionHash: Bytes!
   owner: Bytes! # address
   buyer: Bytes! # address
@@ -175,7 +174,7 @@ type Sale @entity {
   seller: Bytes! # address
   price: BigInt! # uint256
   nft: NFT!
-  amount: Int!
+  amount: BigInt!
   timestamp: BigInt!
   transactionHash: Bytes!
 
@@ -187,8 +186,8 @@ type Sale @entity {
 
 type AnalyticsDayData @entity {
   id: ID!
-  date: Int!
-  sales: Int!
+  date: BigInt!
+  sales: BigInt!
   volume: BigInt!
   creatorsEarning: BigInt!
   daoEarning: BigInt!

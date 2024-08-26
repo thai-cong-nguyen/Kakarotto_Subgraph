@@ -31,13 +31,13 @@ export function trackSale(
         return
     }
 
-    let saleId = BigInt.fromI32(count.salesTotal).toString()
+    let saleId = count.salesTotal.toString()
     let sale = new Sale(saleId)
     sale.type = type
     sale.buyer = changetype<Bytes>(buyer)
     sale.seller = changetype<Bytes>(seller)
     sale.nft = nftId
-    sale.amount = 1
+    sale.amount = BigInt.fromI32(1)
     sale.price = price  
     sale.transactionHash = transactionHash
     sale.timestamp = timestamp
@@ -47,17 +47,17 @@ export function trackSale(
     sale.save()    
 
     let buyerAccount = createOrLoadAccount(buyer)
-    buyerAccount.purchases += 1
+    buyerAccount.purchases = buyerAccount.purchases.plus(BigInt.fromI32(1))
     buyerAccount.spent = buyerAccount.spent.plus(price)
     buyerAccount.save()
 
     let sellerAccount = createOrLoadAccount(seller)
-    sellerAccount.sales += 1
+    sellerAccount.sales = sellerAccount.sales.plus(BigInt.fromI32(1))
     sellerAccount.earned = sellerAccount.earned.plus(price)
     sellerAccount.save()
 
     nft.soldAt = timestamp
-    nft.sales += 1
+    nft.sales =  nft.sales.plus(BigInt.fromI32(1))
     nft.volume = nft.volume.plus(price)
     nft.updatedAt = timestamp
     nft.save()
@@ -68,7 +68,7 @@ export function trackSale(
 
 export function updateAnalyticsDayData(sales: Sale, feesCollectorCut: BigInt): AnalyticsDayData {
     let analyticsDayData = getOrCreateAnalyticsDayData(sales.timestamp)
-    analyticsDayData.sales += 1
+    analyticsDayData.sales = analyticsDayData.sales.plus(BigInt.fromI32(1))
     analyticsDayData.volume = analyticsDayData.volume.plus(sales.price)
     analyticsDayData.daoEarning = analyticsDayData.daoEarning.plus(feesCollectorCut.times(sales.price).div(ONE_MILLION))
 
@@ -82,8 +82,8 @@ export function getOrCreateAnalyticsDayData(blockTimestamp: BigInt): AnalyticsDa
     let analyticsDayData = AnalyticsDayData.load(dayID.toString())
     if (analyticsDayData == null) {
         analyticsDayData = new AnalyticsDayData(dayID.toString())
-        analyticsDayData.date = dayStartTimestamp
-        analyticsDayData.sales = 0
+        analyticsDayData.date = BigInt.fromI32(dayStartTimestamp)
+        analyticsDayData.sales = BigInt.fromI32(0)
         analyticsDayData.volume = BigInt.fromI32(0)
         analyticsDayData.creatorsEarning = BigInt.fromI32(0)
         analyticsDayData.daoEarning = BigInt.fromI32(0)

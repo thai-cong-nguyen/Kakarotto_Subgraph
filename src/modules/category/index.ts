@@ -15,7 +15,7 @@ export function getCategories(contractAddress: Address): string {
         category = categories.ITEM
     }
     else {
-        log.warning('Contract address {} not being monitored', [contractAddressString])
+        log.error('Contract address {} not being monitored', [contractAddressString])
         category = contractAddressString
     }
     return category

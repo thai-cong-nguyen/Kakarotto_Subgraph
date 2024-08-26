@@ -10,15 +10,15 @@ export function buildCount(): Count {
     
     if (count == null) {
         count = new Count(DEFAULT_ID)
-        count.orderTotal = 0
-        count.orderCharacterTotal = 0
-        count.orderTreasureTotal =0
-        count.orderItemTotal = 0
-        count.characterTotal =0
-        count.treasureTotal =0
-        count.itemTotal = 0
-        count.started = 0
-        count.salesTotal = 0
+        count.orderTotal = BigInt.fromI32(0)
+        count.orderCharacterTotal = BigInt.fromI32(0)
+        count.orderTreasureTotal =BigInt.fromI32(0)
+        count.orderItemTotal = BigInt.fromI32(0)
+        count.characterTotal =BigInt.fromI32(0)
+        count.treasureTotal =BigInt.fromI32(0)
+        count.itemTotal = BigInt.fromI32(0)
+        count.started = BigInt.fromI32(0)
+        count.salesTotal = BigInt.fromI32(0)
         count.creatorEarningTotal = BigInt.fromI32(0)
         count.daoEarningTotal = BigInt.fromI32(0)
     }
@@ -31,13 +31,13 @@ export function buildCountFromNFT(nft: NFT): Count {
     let count = buildCount()
 
     if (category == categories.CHARACTER) {
-        count.characterTotal += 1
+        count.characterTotal = count.characterTotal.plus(BigInt.fromI32(1))
     }
     else if (category == categories.TREASURE) {
-        count.treasureTotal += nft.amount.toI32()
+        count.treasureTotal = count.treasureTotal.plus(nft.amount)
     }
     else if (category == categories.ITEM) {
-        count.itemTotal += 1
+        count.itemTotal = count.itemTotal.plus(BigInt.fromI32(1))
     }
 
     return count as Count
@@ -45,7 +45,7 @@ export function buildCountFromNFT(nft: NFT): Count {
 
 export function buildCountFromSale(price: BigInt, feesCollectorCut: BigInt): Count {
     let count = buildCount()
-    count.salesTotal += 1
+    count.salesTotal = count.salesTotal.plus(BigInt.fromI32(1))
     count.creatorEarningTotal = count.creatorEarningTotal.plus(price.minus(feesCollectorCut))
     count.daoEarningTotal = count.daoEarningTotal.plus(
         feesCollectorCut.times(price).div(ONE_MILLION)
@@ -57,17 +57,17 @@ export function buildCountFromSale(price: BigInt, feesCollectorCut: BigInt): Cou
 export function buildCountFromOrder(order: Order): Count {
     let category = order.category
     let count = buildCount()
-    count.orderTotal += 1
+    count.orderTotal = count.orderTotal.plus(BigInt.fromI32(1))
 
     switch(category) {
         case categories.CHARACTER:
-            count.orderCharacterTotal += 1
+            count.orderCharacterTotal = count.orderCharacterTotal.plus(BigInt.fromI32(1))
             break
         case categories.TREASURE:
-            count.orderTreasureTotal += 1
+            count.orderTreasureTotal = count.orderTreasureTotal.plus(BigInt.fromI32(1))
             break
         case categories.ITEM:
-            count.orderItemTotal += 1
+            count.orderItemTotal = count.orderItemTotal.plus(BigInt.fromI32(1))
             break
         default:
     }

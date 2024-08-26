@@ -1,6 +1,6 @@
 import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
 import { KakarottoTreasure as KakarottoTreasureABI, TransferBatch, TransferSingle } from "../../generated/KakarottoTreasure/KakarottoTreasure"
-import { NFT, TreasureAccount } from "../../generated/schema"
+import { NFT, Treasure, TreasureAccount } from "../../generated/schema"
 import { createOrLoadAccount } from "../modules/account"
 import { getCategories } from "../modules/category"
 import { cancelActiveOrder, clearNFTOrderProperties, getNFTId } from "../modules/nft"
@@ -8,6 +8,7 @@ import { buildTreasureFromNFT, getTokenURI as getTokenURITreasure, isBurn as isB
 import { createOrLoadTreasureAccount, getTreasureAccountId } from "../modules/treasureAccount"
 import { buildCountFromNFT } from "../modules/count"
 import * as rarities from "../modules/nft/rarity"
+import * as categories from "../modules/category/categories"
 
 export function handleTransferBatch(event: TransferBatch): void {
     if (event.params.ids.length == 0 || event.params.values.length == 0) {
@@ -37,7 +38,7 @@ export function handleTransferBatch(event: TransferBatch): void {
         nft.soldAt = null
         nft.transferredAt = event.block.timestamp
         // analytics
-        nft.sales = 0
+        nft.sales = BigInt.fromI32(0)
         nft.volume = BigInt.fromI32(0)
         nft.tokenURI = getTokenURITreasure(event.address, event.params.ids[index])
 
@@ -172,17 +173,17 @@ export function handleTransferSingle(event: TransferSingle): void {
         nft.amount = event.params.value
         nft.soldAt = null
         // analytics
-        nft.sales = 0
+        nft.sales = BigInt.fromI32(0)
         nft.volume = BigInt.fromI32(0)
         nft.tokenURI = getTokenURITreasure(event.address, event.params.id)
+
     }
     nft.updatedAt = event.block.timestamp   
     nft.transferredAt = event.block.timestamp
-
+    
     if (!isBurnTreasure(event)) {
         // To Transfer
-        const toAccount = createOrLoadAccount(event.params.to)
-
+        let toAccount = createOrLoadAccount(event.params.to)
         let toTreasureAccount = createOrLoadTreasureAccount(event.address, changetype<Address>(toAccount.address), event.params.id)
         toTreasureAccount.balance = toTreasureAccount.balance.plus(event.params.value)
         toTreasureAccount.save()
@@ -217,28 +218,27 @@ export function handleTransferSingle(event: TransferSingle): void {
         metric.save()
         
         let treasure = buildTreasureFromNFT(nft)
+        treasure.save()
         nft.treasure = treasure.id
         // search indexes
         nft.searchIsTreasure = true
-        nft.searchTreasureAmount = changetype<i32>(event.params.value)
     }
     // Normal Transfer
     else if (!isMintTreasure(event)) {
-        const fromAccount = createOrLoadAccount(event.params.from)
+        let fromAccount = createOrLoadAccount(event.params.from)
         let fromTreasureAccount = createOrLoadTreasureAccount(event.address, changetype<Address>(fromAccount.address), event.params.id)
         fromTreasureAccount.balance = fromTreasureAccount.balance.minus(event.params.value)
         fromTreasureAccount.save()
     }
     // Burning 
     else if (isBurnTreasure(event)) {
-        const fromAccount = createOrLoadAccount(event.params.from)
+        let fromAccount = createOrLoadAccount(event.params.from)
         let fromTreasureAccount = createOrLoadTreasureAccount(event.address, changetype<Address>(fromAccount.address), event.params.id)
         fromTreasureAccount.balance = fromTreasureAccount.balance.minus(event.params.value)
         fromTreasureAccount.save()
         let metric = buildCountFromNFT(nft)
-        metric.treasureTotal -= changetype<i32>(event.params.value)
+        metric.treasureTotal = metric.treasureTotal.minus(event.params.value)
         metric.save()
-        nft.searchTreasureAmount -= changetype<i32>(event.params.value)
     }
     
     nft.save()
