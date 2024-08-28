@@ -10,7 +10,8 @@ type Count @entity {
   treasureTotal: BigInt!
   itemTotal: BigInt!
 
-  started: BigInt!
+  characterStarted: BigInt!
+  itemStarted: BigInt!
   salesTotal: BigInt!
   creatorEarningTotal: BigInt!
   daoEarningTotal: BigInt!
@@ -20,7 +21,6 @@ type Account @entity {
   id: ID! # address
   address: Bytes! # address
   nfts: [NFT!] @derivedFrom(field: "owner")
-  treasures: [Treasure!] @derivedFrom(field: "owner")
   treasureAccounts: [TreasureAccount!] @derivedFrom(field: "account")
 
   # analytics
@@ -78,23 +78,23 @@ type NFT @entity {
 
 type Character @entity {
   id: ID!
-  characterAccount: CharacterAccount! @derivedFrom(field: "character")
+  characterAccount: CharacterAccount @derivedFrom(field: "character")
   level: BigInt! # uint256
   exp: BigInt! # uint256
   nft: NFT! @derivedFrom(field: "character")
-  attributes: [CharacterAttribute!]! @derivedFrom(field: "character")
+  attributes: [CharacterAttribute!] @derivedFrom(field: "character")
 }
 
 type CharacterAttribute @entity {
   id: ID!
   attribute: Attribute! # string
-  character: Character @derivedFrom(field: "attributes")
+  character: Character!
   value: BigInt! # uint256
 }
 
 type CharacterAccount @entity {
   id: ID! # address
-  character: Character @derivedFrom(field: "characterAccount")
+  character: Character!
   contractAddress: Bytes! # address
 }
 
@@ -105,12 +105,12 @@ type Treasure @entity {
   nft: NFT! @derivedFrom(field: "treasure")
 
   name: String # string
-  owner: [Account!] @derivedFrom(field: "treasures")
+  owner: [Account!]
 }
 
 type TreasureAccount @entity {
   id: ID!
-  account: Account! @derivedFrom(field: "treasureAccounts")
+  account: Account!
   treasure: Treasure!
   balance: BigInt!
 }

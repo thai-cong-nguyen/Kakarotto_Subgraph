@@ -1,4 +1,4 @@
-import { ItemCreated, MetadataUpdate, KakarottoItem as KakarottoItemABI } from "../../generated/KakarottoItem/KakarottoItem"
+import { ItemCreated, MetadataUpdate, KakarottoItem as KakarottoItemABI, Transfer } from "../../generated/KakarottoItem/KakarottoItem"
 import { Item, ItemAttribute, NFT } from "../../generated/schema"
 import { getCategories } from "../modules/category"
 import { getItemId } from "../modules/item"
@@ -6,8 +6,17 @@ import { createItemAttribute } from "../modules/itemAttribute"
 import { getNFTId } from "../modules/nft"
 import * as rarities from "../modules/nft/rarity"
 import * as attributes from "../modules/attribute/attribute"
+import { ERC721 } from "../../generated/templates"
+import { buildCount } from "../modules/count"
+import { BigInt } from "@graphprotocol/graph-ts"
 
 export function handleItemCreated(event: ItemCreated): void {
+    let count = buildCount()
+    if (count.itemStarted == BigInt.fromI32(0)) {
+        ERC721.create(event.address)
+        count.itemStarted = BigInt.fromI32(1)
+        count.save()
+    }
     const itemId = getItemId(event.address, event.params.tokenId)
     let item = Item.load(itemId)
     if (!item) {

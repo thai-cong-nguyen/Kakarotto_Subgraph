@@ -33,9 +33,9 @@ export function getItemId(contractAddress: Address, tokenId: BigInt): string{
 }
 
 export function buildItemFromNFT(nft: NFT): Item {
-    let item = new Item(nft.id)
-
-    // Item
-    // nothing
+    let item = Item.load(nft.id)
+    if (item == null) {
+        item = new Item(nft.id)
+    }
     return item
 }

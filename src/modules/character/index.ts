@@ -19,11 +19,13 @@ export function getCharacterId(contractAddress: Address, tokenId: BigInt): strin
 }
 
 export function buildCharacterFromNFT(nft: NFT): Character {
-    let character = new Character(nft.id)
+    let character = Character.load(nft.id)
     
-    // Character
-    character.exp = BigInt.fromI32(0)
-    character.level = BigInt.fromI32(0)
+    if (character == null) {
+        character = new Character(nft.id)
+        character.exp = BigInt.fromI32(0)
+        character.level = BigInt.fromI32(0)
+    }
     
     return character
 }

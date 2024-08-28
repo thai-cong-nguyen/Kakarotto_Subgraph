@@ -1,4 +1,4 @@
-import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, log } from "@graphprotocol/graph-ts"
 import { Character, Item, NFT } from "../../generated/schema"
 import { Transfer } from "../../generated/templates/ERC721/ERC721"
 import { getCategories } from "../modules/category"
@@ -19,15 +19,35 @@ export function handleTransfer(event: Transfer): void {
     let id = getNFTId(category, event.address, event.params.tokenId)
     let toAddress = (changetype<Bytes>(event.params.to)).toHexString()
 
+    // let nft = NFT.load(id)
+    // if (nft == null) {
+    //     log.warning("NFT not found: {}", [id])
+    //     nft = new NFT(id)
+    //     // Normal Transfer
+    //     nft.tokenId = event.params.tokenId
+    //     nft.contractAddress = changetype<Bytes>(event.address)
+    //     nft.category = category
+    //     nft.owner = toAddress
+    //     nft.amount = BigInt.fromI32(1)
+    //     // Timestamps
+    //     nft.updatedAt = event.block.timestamp
+    //     nft.soldAt = null
+    //     nft.transferredAt = event.block.timestamp
+    //     // analytics
+    //     nft.sales = BigInt.fromI32(0)
+    //     nft.volume = BigInt.fromI32(0)
+
+    //     nft.tokenURI = getTokenURI(event)
+    //     nft.save()
+    // }
+
     let nft = new NFT(id)
-    
     // Normal Transfer
     nft.tokenId = event.params.tokenId
     nft.contractAddress = changetype<Bytes>(event.address)
     nft.category = category
-    if (!isTransferERC6551Account(event)) {
-        nft.owner = (changetype<Bytes>(event.params.to)).toHexString()
-    }
+    nft.owner = toAddress
+    nft.amount = BigInt.fromI32(1)
     // Timestamps
     nft.updatedAt = event.block.timestamp
     nft.soldAt = null
@@ -39,8 +59,9 @@ export function handleTransfer(event: Transfer): void {
     nft.tokenURI = getTokenURI(event)
 
     if (isMint(event)) {
+        log.info("Minting NFT: {}", [id])
         nft.createdAt = event.block.timestamp
-        nft.owner = toAddress
+        nft.creator = changetype<Bytes>(event.params.to)
         let metric = buildCountFromNFT(nft)
         metric.save()
     }
@@ -52,28 +73,28 @@ export function handleTransfer(event: Transfer): void {
     }
 
     if (category == categories.CHARACTER) {
-        let character: Character
+        let character: Character = buildCharacterFromNFT(nft)
         if (isMint(event)) {
-            character = buildCharacterFromNFT(nft)
             nft.character = character.id
-
             // search indexes
             nft.searchIsCharacter = true
             nft.searchCharacterLevel = character.level
             nft.searchCharacterExp = character.exp
-            character.save()
         }
+        character.save()
+        log.info("Transferring Character: {}", [character.id])
     }
     else if (category == categories.ITEM) {
-        let item: Item
+        let item: Item = buildItemFromNFT(nft)
         if (isMint(event)) {
-            item = buildItemFromNFT(nft)
             nft.item = item.id
-
             // search indexes
             nft.searchIsItem = true
         }
+        item.save()
+        log.info("Transferring Item: {}", [item.id])
     }
     createOrLoadAccount(event.params.to)
     nft.save()
+    log.info("Transferring NFT: {}", [nft.id, nft.owner, nft.amount.toString(), nft.category, nft.tokenId.toString(), nft.tokenURI ? changetype<string>(nft.tokenURI) : ""])
 }
