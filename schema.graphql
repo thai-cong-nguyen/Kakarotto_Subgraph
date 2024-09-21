@@ -58,6 +58,7 @@ type NFT @entity {
   sales: BigInt!
   volume: BigInt!
 
+  searchOwner: String
   # search indexes
   searchOrderStatus: OrderStatus
   searchOrderPrice: BigInt

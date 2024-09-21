@@ -78,7 +78,7 @@ dataSources:
     name: KakarottoMarketplace
     network: sepolia
     source:
-      address: "0x50b7210384431eebd54d1b94dbd14a4c13763247"
+      address: "0xb22383Db550cddD81AF5BC14323ed87EBd86a6F6"
       abi: KakarottoMarketplace
       startBlock: 6556597
     mapping:

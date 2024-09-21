@@ -43,6 +43,7 @@ export function handleCharacterCreated(event: KakarottoCharacterCreated): void {
         // analytics
         nft.sales = BigInt.fromI32(0)
         nft.volume = BigInt.fromI32(0)
+        
         nft.save()
     }
 

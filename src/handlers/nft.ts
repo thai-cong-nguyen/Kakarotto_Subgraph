@@ -47,6 +47,7 @@ export function handleTransfer(event: Transfer): void {
     nft.contractAddress = changetype<Bytes>(event.address)
     nft.category = category
     nft.owner = toAddress
+    nft.searchOwner = toAddress
     nft.amount = BigInt.fromI32(1)
     // Timestamps
     nft.updatedAt = event.block.timestamp
